@@ -1,0 +1,29 @@
+{
+  "name": "nol-ticket-next-template",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "lint": "next lint",
+    "assets:download": "node scripts/download-assets.mjs",
+    "audit:visual": "node scripts/visual-audit.mjs",
+    "assets:capture-live": "node scripts/capture-live-assets.mjs",
+    "audit:smoke": "node scripts/smoke-audit.mjs"
+  },
+  "dependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0"
+  }
+}

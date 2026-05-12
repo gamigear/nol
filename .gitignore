@@ -1,0 +1,11 @@
+.next
+node_modules
+.env*.local
+npm-debug.log*
+.DS_Store
+artifacts/runtime
+.docker-home
+.npm-cache
+.audit-*.png
+qa
+tsconfig.tsbuildinfo
