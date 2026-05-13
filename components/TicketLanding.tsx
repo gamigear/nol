@@ -116,8 +116,8 @@ function Arrow({ direction = "next" }: { direction?: "prev" | "next" }) {
 }
 
 function getCircularItems<T>(items: T[], start: number, count: number) {
-  const visibleCount = Math.min(count, items.length);
-  return Array.from({ length: visibleCount }, (_, index) => items[(start + index) % items.length]);
+  if (items.length === 0) return [];
+  return Array.from({ length: count }, (_, index) => items[(start + index) % items.length]);
 }
 
 function moveCircularIndex(current: number, length: number, step: number) {
