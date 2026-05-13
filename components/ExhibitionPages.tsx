@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import rawEventImages from "../qa/events-source/all-images.json";
+import rawEventImages from "../lib/data/exhibition-images.json";
 import { SiteFooter, SiteHeader } from "./TicketLanding";
 
 type RawImage = {
