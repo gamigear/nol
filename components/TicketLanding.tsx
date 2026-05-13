@@ -424,12 +424,13 @@ function ShowcaseCard({ item }: { item: TicketItem }) {
 function ShowcaseSection({ section, items, tabs }: { section: HomepageSection; items: TicketItem[]; tabs?: string[] }) {
   const title = section.title;
   const isMobile = useIsMobile();
+  const isKeyword = section.id === "keyword";
   const [activeTab, setActiveTab] = useState(tabs?.[0] ?? "");
   const [start, setStart] = useState(0);
-  const sectionClass = viText(title) === "Từ khóa gợi ý" ? "showcase-section keyword-section" : "showcase-section md-section";
+  const sectionClass = isKeyword ? "showcase-section keyword-section" : "showcase-section md-section";
   const baseItems = useCollectionItems(section.id, items);
   const tabbedItems = useTabItems(section.id, activeTab, getTabbedItems(baseItems, tabs, activeTab));
-  const visibleItems = isMobile ? tabbedItems : getCircularItems(tabbedItems, start, 5);
+  const visibleItems = isMobile ? tabbedItems : getCircularItems(tabbedItems, start, isKeyword ? 4 : 5);
   return <section className={sectionClass}><SectionTitle title={title} />{tabs ? <ProductTabs tabs={tabs} active={activeTab} onChange={(tab) => { setActiveTab(tab); setStart(0); }} compact /> : null}<div className="poster-slider-wrap"><button className="slider-control slider-left" onClick={() => setStart((value) => moveCircularIndex(value, tabbedItems.length, -1))} aria-label="Quay lại"><Arrow direction="prev" /></button><div key={activeTab} className="showcase-grid content-width">{visibleItems.map((item, index) => <ShowcaseCard key={`${activeTab}-${item.title}-${start}-${index}`} item={item} />)}</div><button className="slider-control slider-right" onClick={() => setStart((value) => moveCircularIndex(value, tabbedItems.length, 1))} aria-label="Tiếp"><Arrow /></button></div></section>;
 }
 
