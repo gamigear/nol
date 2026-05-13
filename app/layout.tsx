@@ -8,11 +8,12 @@ const inter = Inter({ subsets: ["latin", "vietnamese"], display: "swap" });
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getTemplateData();
   const siteName = data.siteInfo?.siteName || "NOL Ticket";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nol.gamigear.com";
   const description = data.siteInfo?.footerNotice || "Template frontend Next.js cho trải nghiệm đặt vé, sự kiện và thương mại.";
   const faviconUrl = data.siteInfo?.faviconUrl;
 
   return {
-    metadataBase: new URL("https://nol.gamigear.com"),
+    metadataBase: new URL(siteUrl),
     applicationName: siteName,
     title: {
       default: siteName,
@@ -26,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: siteName,
       description,
-      url: "https://nol.gamigear.com",
+      url: siteUrl,
       siteName,
       locale: "vi_VN",
       type: "website",
