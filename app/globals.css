@@ -291,7 +291,7 @@ img { display: block; max-width: 100%; }
 .showcase-card p { margin: 0 0 4px; color: #999; font-size: 1.3rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .keyword-section .section-title { margin-bottom: 22px; }
 .keyword-section .compact-tabs { justify-content: center; margin-bottom: 24px; }
-.keyword-section .showcase-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; overflow: visible; }
+.keyword-section .showcase-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; overflow: visible; }
 .keyword-section .showcase-card { min-width: 0; }
 .keyword-section .showcase-card .poster-wrap { width: 100%; aspect-ratio: 314 / 420; border-radius: 8px; }
 .keyword-section .showcase-card .poster-wrap:after { display: none; }
