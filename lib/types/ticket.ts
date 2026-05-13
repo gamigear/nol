@@ -113,6 +113,13 @@ export type Banner = {
   thumbnail?: string;
   backgroundColor?: string;
   href?: string;
+  layout?: "image" | "product";
+  kicker?: string;
+  subtitle?: string;
+  productImage?: string;
+  productTitle?: string;
+  productPrice?: string;
+  ctaLabel?: string;
 };
 
 export type TicketItem = {
@@ -136,4 +143,5 @@ export type TicketItem = {
 export type Shortcut = {
   label: string;
   icon: string;
+  href?: string;
 };

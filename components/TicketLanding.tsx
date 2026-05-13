@@ -202,6 +202,7 @@ function HeroCarousel() {
     return () => window.clearInterval(id);
   }, [banners.length]);
   const current = banners[active] ?? banners[0];
+  const isProductBanner = current.layout === "product" || Boolean(current.productImage);
   const heroStyle = {
     backgroundColor: current.backgroundColor,
   } as CSSProperties;
@@ -210,16 +211,33 @@ function HeroCarousel() {
     <section className="hero-wrap" aria-label="main banners">
       <div className="hero-frame" style={heroStyle}>
         <button className="round-control left" onClick={() => setActive((active - 1 + banners.length) % banners.length)} aria-label="Quay lại"><Arrow direction="prev" /></button>
-        <picture key={current.image}>
-          <source media="(max-width: 1023px)" srcSet={current.mobileImage ?? current.image} />
-          <img src={current.image} alt={viText(current.title)} className="hero-image" />
-        </picture>
+        {isProductBanner ? (
+          <a className="hero-designed content-width" href={current.href ?? "#"} key={`${current.title}-${current.productImage ?? current.image}`}>
+            <div className="hero-designed-copy">
+              {current.kicker ? <span>{viText(current.kicker)}</span> : null}
+              <h1>{viProduct(current.title)}</h1>
+              {current.subtitle ? <p>{viText(current.subtitle)}</p> : null}
+              <div className="hero-designed-meta">
+                {current.productPrice ? <strong>{current.productPrice}</strong> : null}
+                <em>{viText(current.ctaLabel ?? "Xem sản phẩm")}</em>
+              </div>
+            </div>
+            <div className="hero-designed-media">
+              <img src={current.productImage ?? current.image} alt={viText(current.productTitle ?? current.title)} />
+            </div>
+          </a>
+        ) : (
+          <picture key={current.image}>
+            <source media="(max-width: 1023px)" srcSet={current.mobileImage ?? current.image} />
+            <img src={current.image} alt={viText(current.title)} className="hero-image" />
+          </picture>
+        )}
         <button className="round-control right" onClick={() => setActive((active + 1) % banners.length)} aria-label="Tiếp"><Arrow /></button>
         <div className="hero-counter">{counterText}</div>
         <div className="hero-thumbs" aria-hidden="true">
           {banners.map((item, index) => (
             <button key={item.title} className={index === active ? "active" : ""} onClick={() => setActive(index)} onFocus={() => setActive(index)} onMouseEnter={() => setActive(index)} tabIndex={-1}>
-              <img src={item.thumbnail ?? item.image} alt="" />
+              <img src={item.thumbnail ?? item.productImage ?? item.image} alt="" />
             </button>
           ))}
         </div>
@@ -237,7 +255,7 @@ function MobileShortcutGrid() {
   const { mobileShortcuts } = useTemplateData();
   return (
     <section className="mobile-shortcuts" aria-label="ticket shortcuts">
-      {mobileShortcuts.map((item) => <a href={shortcutLinks[item.label] ?? "/contents/category"} key={viText(item.label)}><img src={item.icon} alt="" /><span>{viText(item.label)}</span></a>)}
+      {mobileShortcuts.map((item) => <a href={item.href ?? shortcutLinks[item.label] ?? "/contents/category"} key={viText(item.label)}><img src={item.icon} alt="" /><span>{viText(item.label)}</span></a>)}
     </section>
   );
 }
@@ -246,7 +264,16 @@ function MiniBanners() {
   const { miniBanners } = useTemplateData();
   return (
     <section className="mini-section content-width" aria-label="promotion banners">
-      {miniBanners.map((item) => <a className="mini-card" key={item.title}><img src={item.image} alt={viText(item.title)} /></a>)}
+      {miniBanners.map((item) => item.layout === "product" || item.productImage ? (
+        <a className="mini-card mini-designed-card" href={item.href ?? "#"} key={item.title} style={{ backgroundColor: item.backgroundColor }}>
+          <div>
+            {item.kicker ? <span>{viText(item.kicker)}</span> : null}
+            <strong>{viProduct(item.title)}</strong>
+            {item.subtitle ? <p>{viText(item.subtitle)}</p> : null}
+          </div>
+          <img src={item.productImage ?? item.image} alt={viText(item.title)} />
+        </a>
+      ) : <a className="mini-card" key={item.title}><img src={item.image} alt={viText(item.title)} /></a>)}
     </section>
   );
 }
