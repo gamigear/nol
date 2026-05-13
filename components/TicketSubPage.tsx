@@ -146,8 +146,16 @@ function BackIcon() {
   return <span className="mobile-back-icon" aria-hidden="true" />;
 }
 
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+  window.location.href = "/";
+}
+
 function MobilePlainHeader({ title }: { title: string }) {
-  return <header className="mobile-plain-header"><button aria-label="Quay lại"><BackIcon /></button><h1>{viText(title)}</h1></header>;
+  return <header className="mobile-plain-header"><button type="button" aria-label="Quay lại" onClick={goBack}><BackIcon /></button><h1>{viText(title)}</h1></header>;
 }
 
 function MobileGenreHeader({ title }: { title: string }) {
@@ -184,78 +192,87 @@ function MobileRankingCard({ item, index }: { item: TicketItem; index: number })
 
 function MobileRankingPage() {
   return (
-    <main className="subpage-mobile mobile-ranking-page">
-      <MobilePlainHeader title="Xếp hạng theo thể loại" />
-      <section className="mobile-ranking-tabs">
-        <div className="mobile-pill-row">{genres.map((tab) => <button key={tab} className={tab === "Nhạc kịch" ? "active" : ""}>{viText(tab)}</button>)}</div>
-        <div className="mobile-subtab-row">{rankingSubTabs.map((tab) => <button key={tab} className={tab === "Tất cả" ? "active" : ""}>{viText(tab)}</button>)}</div>
-      </section>
-      <section className="mobile-ranking-stats"><span>Cập nhật 2026.05.03 02:30</span><button>Theo ngày⌄</button></section>
-      <section className="mobile-ranking-list">{rankingItems.map((item, index) => <MobileRankingCard key={item.rank} item={item} index={index} />)}</section>
-    </main>
+    <>
+      <main className="subpage-mobile mobile-ranking-page">
+        <MobilePlainHeader title="Xếp hạng theo thể loại" />
+        <section className="mobile-ranking-tabs">
+          <div className="mobile-pill-row">{genres.map((tab) => <button key={tab} className={tab === "Nhạc kịch" ? "active" : ""}>{viText(tab)}</button>)}</div>
+          <div className="mobile-subtab-row">{rankingSubTabs.map((tab) => <button key={tab} className={tab === "Tất cả" ? "active" : ""}>{viText(tab)}</button>)}</div>
+        </section>
+        <section className="mobile-ranking-stats"><span>Cập nhật 2026.05.03 02:30</span><button>Theo ngày⌄</button></section>
+        <section className="mobile-ranking-list">{rankingItems.map((item, index) => <MobileRankingCard key={item.rank} item={item} index={index} />)}</section>
+        <SiteFooter />
+      </main>
+    </>
   );
 }
 
 function MobileOpenPage() {
   return (
-    <main className="subpage-mobile mobile-open-page">
-      <MobilePlainHeader title="Sắp mở bán" />
-      <section className="mobile-open-hero">
-        <div className="mobile-open-hero-track">
-          {openHeroItems.map((item) => (
-            <article className="mobile-open-hero-card" key={item.title}>
-              <div className="open-hero-image" style={{ backgroundImage: `url(${item.image})` }}><img src={item.image} alt="" /></div>
-              <strong>{viText(item.period)}</strong>
-              <h2>{viProduct(item.title)}</h2>
-            </article>
-          ))}
-        </div>
-        <div className="mobile-open-dots"><span className="active" /><span /><span /><span /><span /><span /></div>
-      </section>
-      <section className="mobile-open-list-section">
-        <div className="mobile-filter-row"><button>↕ Mở bán</button><button>Thể loại⌄</button><button>Khu vực⌄</button></div>
-        <div className="mobile-open-list">
-          {openNoticeItems.map((item) => (
-            <article className="mobile-open-item" key={item.title}>
-              <img src={item.image} alt="" />
-              <div><strong>{viText(item.period)}</strong><h2>{viProduct(item.title)}</h2><p>{viText(item.venue)}</p><span>{viText(item.badge)}</span></div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </main>
+    <>
+      <main className="subpage-mobile mobile-open-page">
+        <MobilePlainHeader title="Sắp mở bán" />
+        <section className="mobile-open-hero">
+          <div className="mobile-open-hero-track">
+            {openHeroItems.map((item) => (
+              <article className="mobile-open-hero-card" key={item.title}>
+                <div className="open-hero-image" style={{ backgroundImage: `url(${item.image})` }}><img src={item.image} alt="" /></div>
+                <strong>{viText(item.period)}</strong>
+                <h2>{viProduct(item.title)}</h2>
+              </article>
+            ))}
+          </div>
+          <div className="mobile-open-dots"><span className="active" /><span /><span /><span /><span /><span /></div>
+        </section>
+        <section className="mobile-open-list-section">
+          <div className="mobile-filter-row"><button>↕ Mở bán</button><button>Thể loại⌄</button><button>Khu vực⌄</button></div>
+          <div className="mobile-open-list">
+            {openNoticeItems.map((item) => (
+              <article className="mobile-open-item" key={item.title}>
+                <img src={item.image} alt="" />
+                <div><strong>{viText(item.period)}</strong><h2>{viProduct(item.title)}</h2><p>{viText(item.venue)}</p><span>{viText(item.badge)}</span></div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <SiteFooter />
+      </main>
+    </>
   );
 }
 
 function MobileGenrePage({ title, heroItems = genreHeroItems, dealItems = genreDealItems, links = ["Tất cả nhạc kịch", "Bản quyền", "🔥 Đang hot", "Nhạc kịch sáng tạo", "Original/Quốc tế", "Biểu diễn không lời"] }: { title: string; heroItems?: TicketItem[]; dealItems?: TicketItem[]; links?: string[] }) {
   return (
-    <main className="subpage-mobile mobile-genre-page">
-      <MobileGenreHeader title={title} />
-      <section className="mobile-genre-hero">
-        <div className="mobile-genre-track">
-          {heroItems.map((item) => (
-            <article className="mobile-genre-card" key={item.title}>
-              <img src={item.image} alt="" />
-              <div><h2>{viProduct(item.title)}</h2><p>{viText(item.venue)}</p><p>{viText(item.period)}</p></div>
-            </article>
-          ))}
-        </div>
-      </section>
-      <section className="mobile-genre-links">
-        {links.map((item) => <button key={item}>{viText(item)} ›</button>)}
-      </section>
-      <section className="mobile-genre-discount">
-        <h2>Đang giảm giá!</h2>
-        <div className="mobile-deal-list">
-          {dealItems.map((item) => (
-            <article className="mobile-deal-item" key={item.title}>
-              <img src={item.image} alt="" />
-              <div><span>{viText(item.badge)}</span><h3>{viProduct(item.title)}</h3><p>{viText(item.venue)}</p><p>{viText(item.period)}</p><strong>{viText(item.price)}</strong></div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </main>
+    <>
+      <main className="subpage-mobile mobile-genre-page">
+        <MobileGenreHeader title={title} />
+        <section className="mobile-genre-hero">
+          <div className="mobile-genre-track">
+            {heroItems.map((item) => (
+              <article className="mobile-genre-card" key={item.title}>
+                <img src={item.image} alt="" />
+                <div><h2>{viProduct(item.title)}</h2><p>{viText(item.venue)}</p><p>{viText(item.period)}</p></div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className="mobile-genre-links">
+          {links.map((item) => <button key={item}>{viText(item)} ›</button>)}
+        </section>
+        <section className="mobile-genre-discount">
+          <h2>Đang giảm giá!</h2>
+          <div className="mobile-deal-list">
+            {dealItems.map((item) => (
+              <article className="mobile-deal-item" key={item.title}>
+                <img src={item.image} alt="" />
+                <div><span>{viText(item.badge)}</span><h3>{viProduct(item.title)}</h3><p>{viText(item.venue)}</p><p>{viText(item.period)}</p><strong>{viText(item.price)}</strong></div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <SiteFooter />
+      </main>
+    </>
   );
 }
 

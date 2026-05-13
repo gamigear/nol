@@ -423,6 +423,7 @@ export function ProductDetailPage({ productId, initialProduct = null }: { produc
           <h2>Mô tả sản phẩm</h2>
           {descriptionHtml ? <div className="rich-content product-rich" dangerouslySetInnerHTML={{ __html: descriptionHtml }} /> : <p>{detailItem.venue}</p>}
         </section>
+        <SiteFooter />
       </main>
     </>
   );
@@ -484,6 +485,7 @@ export function NoticeDetailPage() {
           <p>- Giá vé: Người lớn 15.000đ / trẻ em 13.000đ</p>
         </section>
         <button type="button" onClick={goToCheckout} className="notice-mobile-cta">Đặt vé ngay</button>
+        <SiteFooter />
       </main>
     </>
   );
@@ -1064,7 +1066,7 @@ function UtilityShell({ title, children }: { title: string; children: ReactNode 
   return (
     <>
       <div className="utility-desktop"><SiteHeader /><main className="utility-shell content-width"><h1>{title}</h1>{children}</main><SiteFooter /></div>
-      <main className="utility-mobile"><MobileTopBar title={viText(title)} search={title === "Danh mục" || title === "Tìm kiếm"} /><div className="utility-mobile-body">{children}</div></main>
+      <main className="utility-mobile"><MobileTopBar title={viText(title)} search={title === "Danh mục" || title === "Tìm kiếm"} /><div className="utility-mobile-body">{children}</div><SiteFooter /></main>
     </>
   );
 }

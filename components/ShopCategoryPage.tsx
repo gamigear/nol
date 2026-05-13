@@ -84,6 +84,7 @@ export default function ShopCategoryPage({ payload, title = "Tour và vé nổi 
         <form action={basePath}><input name="q" defaultValue={q} placeholder="Tìm kiếm" />{activeCategory ? <input type="hidden" name="category" value={activeCategory} /> : null}</form>
         <nav>{payload.categories.slice(0, 8).map((item) => <a key={item.slug} className={activeCategory === item.slug ? "active" : ""} href={queryHref(basePath, { category: item.slug, q, sort })}>{viCategory(item.name)}</a>)}</nav>
         <section>{payload.products.map((product) => <ProductCard key={product.id} product={product} />)}</section>
+        <SiteFooter />
       </main>
     </>
   );
