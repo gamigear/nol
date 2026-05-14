@@ -14,10 +14,10 @@ function useTemplateData() {
 export function useSyncedTemplateData() {
   const contextData = useTemplateData();
   const hasProviderData = contextData !== fallbackTemplateData;
-  const [data, setData] = useState<TemplateData | null>(hasProviderData ? contextData : null);
+  const [data, setData] = useState<TemplateData>(contextData);
 
   useEffect(() => {
-    setData(hasProviderData ? contextData : null);
+    setData(contextData);
   }, [contextData, hasProviderData]);
 
   useEffect(() => {
@@ -26,7 +26,8 @@ export function useSyncedTemplateData() {
     fetch("/nol-template-data", { cache: "no-store" })
       .then((response) => response.ok ? response.json() : null)
       .then((payload) => {
-        if (active && payload?.data) setData(payload.data as TemplateData);
+        if (!active) return;
+        setData(payload?.data ? payload.data as TemplateData : fallbackTemplateData);
       })
       .catch(() => {
         if (active) setData(fallbackTemplateData);
@@ -152,7 +153,6 @@ function BrandLogo({ src, mobile = false, alt = "NOL Interpark" }: { src?: strin
 
 export function SiteHeader() {
   const data = useSyncedTemplateData();
-  if (!data) return <div className="site-header-loading" aria-hidden="true" />;
   const { serviceNavItems, siteInfo, ticketNavItems } = data;
   const desktopLogo = siteInfo.logoUrl;
   const mobileLogo = siteInfo.mobileLogoUrl || siteInfo.logoUrl || "/assets/logo/nol-interpark-logo-multiline.svg";

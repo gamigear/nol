@@ -134,12 +134,36 @@ function normalizeDetailItem(item?: TicketItem | null) {
   return {
     id: item?.id,
     variantId: item?.variantId,
-    title: viProduct(item?.title ?? product.title),
-    venue: viText(item?.venue ?? product.venue),
-    period: viText(item?.period ?? product.period),
-    badge: viText(item?.badge ?? product.badge),
-    image: item?.image ?? product.poster,
+    title: viProduct(item?.title ?? "Không tìm thấy sản phẩm"),
+    venue: viText(item?.venue ?? "Sản phẩm không tồn tại hoặc chưa được xuất bản."),
+    period: viText(item?.period ?? "Sản phẩm"),
+    badge: viText(item?.badge ?? "Sản phẩm"),
+    image: item?.image ?? "",
     price: item?.price ?? formatVndPrice(item?.unitPrice),
+  };
+}
+
+function commerceProductToTicketItem(product: {
+  id?: string;
+  slug?: string;
+  title?: string;
+  shortDescription?: string;
+  categoryText?: string;
+  image?: string;
+  price?: string;
+  unitPrice?: number;
+  variantId?: string;
+}): TicketItem {
+  return {
+    id: product.id,
+    slug: product.slug,
+    title: product.title || "Sản phẩm",
+    venue: product.shortDescription || product.categoryText || "Sản phẩm",
+    period: product.categoryText || "Sản phẩm",
+    badge: "Ưu đãi",
+    image: product.image || "",
+    price: product.price || formatVndPrice(product.unitPrice),
+    variantId: product.variantId,
   };
 }
 
@@ -253,15 +277,7 @@ export function ProductDetailPage({ productId, initialProduct = null }: { produc
           }
         }
 
-        const response = await fetch("/nol-template-data", { cache: "no-store" });
-        const payload = await response.json();
-        const sections = ["rankingItems", "discountItems", "openItems", "mdPickItems", "keywordItems", "reviewItems"];
-        const items = sections.flatMap((key) => Array.isArray(payload?.data?.[key]) ? payload.data[key] : []) as TicketItem[];
-        const routeKey = safeDecodeRouteKey(productId);
-        const found = productId
-          ? items.find((item) => item.id === routeKey || item.slug === routeKey || slugifyProductTitle(item.title) === routeKey)
-          : items.find((item) => item.id);
-        if (active) setManagedItem(found ? { ...found, id: found.id || productRouteKey(found), images: found.image ? [{ url: found.image }] : [] } : null);
+        if (active) setManagedItem(null);
       } catch {
         if (active) setManagedItem(null);
       } finally {
@@ -282,10 +298,9 @@ export function ProductDetailPage({ productId, initialProduct = null }: { produc
     let active = true;
     async function loadRelatedProducts() {
       try {
-        const response = await fetch("/nol-template-data", { cache: "no-store" });
+        const response = await fetch("/nol-template-data/commerce-products?limit=16", { cache: "no-store" });
         const payload = await response.json();
-        const sections = ["rankingItems", "discountItems", "openItems", "mdPickItems", "keywordItems", "reviewItems"];
-        const allItems = sections.flatMap((key) => Array.isArray(payload?.data?.[key]) ? payload.data[key] : []) as TicketItem[];
+        const allItems: TicketItem[] = (Array.isArray(payload?.products) ? payload.products : []).map(commerceProductToTicketItem);
         const seen = new Set<string>();
         const currentKey = productId ? safeDecodeRouteKey(productId) : managedItem?.id;
         const currentCategory = viCategory(managedItem?.categoryText || "");
@@ -313,9 +328,9 @@ export function ProductDetailPage({ productId, initialProduct = null }: { produc
   const detailItem = normalizeDetailItem(managedItem);
   const selectedPrice = selectedVariant?.priceText || formatVndPrice(selectedVariant?.salePrice ?? selectedVariant?.price ?? selectedVariant?.unitPrice) || detailItem.price;
   const selectedCartItem = { ...detailItem, variantId: selectedVariant?.id || detailItem.variantId, price: selectedPrice };
-  const gallery = (managedItem?.images?.length ? managedItem.images : [{ url: detailItem.image || product.poster }]).filter((image) => image.url);
+  const gallery = (managedItem?.images?.length ? managedItem.images : detailItem.image ? [{ url: detailItem.image }] : []).filter((image) => image.url);
   const currentGalleryIndex = Math.min(activeImage, Math.max(gallery.length - 1, 0));
-  const heroImage = gallery[currentGalleryIndex]?.url || detailItem.image || product.bridgeHero;
+  const heroImage = gallery[currentGalleryIndex]?.url || detailItem.image || "";
   const descriptionHtml = cleanProductHtml(managedItem?.description);
   const openGalleryViewer = (index: number) => {
     setActiveImage(index);
@@ -325,6 +340,34 @@ export function ProductDetailPage({ productId, initialProduct = null }: { produc
     if (!gallery.length) return;
     setActiveImage((index) => (index + direction + gallery.length) % gallery.length);
   };
+
+  if (!managedItem) {
+    return (
+      <>
+        <div className="utility-desktop">
+          <SiteHeader />
+          <main className="nol-stay-detail product-detail-empty">
+            <nav className="nol-stay-breadcrumb" aria-label="breadcrumb"><a href="/">Trang chủ</a><span>›</span><a href="/shop">Shop</a><span>›</span><b>Sản phẩm</b></nav>
+            <section>
+              <h1>{loaded ? "Không tìm thấy sản phẩm" : "Đang tải thông tin sản phẩm"}</h1>
+              <p>{loaded ? "Sản phẩm này không tồn tại hoặc chưa được xuất bản." : "Vui lòng chờ trong giây lát."}</p>
+              <a href="/shop">Quay lại shop</a>
+            </section>
+          </main>
+          <SiteFooter />
+        </div>
+        <main className="utility-mobile product-mobile commerce-product-mobile">
+          <MobileTopBar title="Sản phẩm | NOL" />
+          <section className="commerce-buybox">
+            <h1>{loaded ? "Không tìm thấy sản phẩm" : "Đang tải thông tin sản phẩm"}</h1>
+            <p className="commerce-short">{loaded ? "Sản phẩm này không tồn tại hoặc chưa được xuất bản." : "Vui lòng chờ trong giây lát."}</p>
+            <div className="commerce-actions"><button type="button" onClick={() => { window.location.href = "/shop"; }}>Quay lại shop</button></div>
+          </section>
+          <SiteFooter />
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

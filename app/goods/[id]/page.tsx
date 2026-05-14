@@ -1,8 +1,7 @@
 import { ProductDetailPage } from "../../../components/TicketUtilityPages";
 
 async function getInitialProduct(id: string) {
-  const baseUrl = process.env.MEDUSA_BACKEND_URL;
-  if (!baseUrl) return null;
+  const baseUrl = process.env.MEDUSA_BACKEND_URL || "https://nol.gamigear.com";
   try {
     const response = await fetch(`${baseUrl.replace(/\/$/, "")}/nol-template-data/commerce-products/${encodeURIComponent(id)}`, { cache: "no-store" });
     if (!response.ok) return null;
